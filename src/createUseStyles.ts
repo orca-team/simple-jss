@@ -47,7 +47,7 @@ export default function createUseStyles<C extends string = string, Props = any>(
   const key = {};
 
   const jss = create(preset());
-  jss.use(plugins);
+  jss.use(...plugins);
 
   const dynamicStyles = getDynamicStyles(styles as Styles);
   const sheet = jss.createStyleSheet(styles, {
