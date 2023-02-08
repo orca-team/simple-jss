@@ -1,0 +1,51 @@
+{
+  "name": "simple-jss",
+  "version": "0.0.1",
+  "description": "Simply integrates JSS with React",
+  "types": "esm/index.d.ts",
+  "module": "esm/index.js",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "father build",
+    "prepublishOnly": "father build"
+  },
+  "files": [
+    "esm",
+    "lib"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/orca-team/simple-jss.git"
+  },
+  "keywords": [
+    "react",
+    "jss"
+  ],
+  "author": "NicoKam",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/orca-team/simple-jss/issues"
+  },
+  "homepage": "https://github.com/orca-team/simple-jss#readme",
+  "dependencies": {
+    "is-in-browser": "^2.0.0",
+    "jss": "^10.9.2",
+    "jss-preset-default": "^10.9.2"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@orca-fe/eslint-config": "^2.3.0",
+    "eslint": "^8.33.0",
+    "father": "^4.1.3",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.1.1",
+    "prettier": "^2.8.4",
+    "typescript": "^4.9.5"
+  }
+}
