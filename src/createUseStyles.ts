@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useDebugValue, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Classes, create, getDynamicStyles, Styles, StyleSheetFactoryOptions, Plugin } from 'jss';
-import preset from 'jss-preset-default';
 import isBrowser from 'is-in-browser';
+import { Classes, Plugin, StyleSheetFactoryOptions, Styles, create, getDynamicStyles } from 'jss';
+import preset from 'jss-preset-default';
+import React, { useDebugValue, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { getManager, manageSheet, unmanageSheet } from './manager';
 
@@ -13,7 +13,6 @@ interface BaseOptions extends StyleSheetFactoryOptions {
 }
 
 interface CreateUseStylesOptions extends BaseOptions {
-  name?: string;
   plugins?: Plugin[];
 }
 
@@ -41,8 +40,11 @@ export default function createUseStyles<C extends string = string, Props = any>(
   styles: Styles<C, Props>,
   options: CreateUseStylesOptions = {},
 ): (data?: Props) => Classes<C> {
-  const { index = getSheetIndex(), name = '', plugins = [], otherOptions } = options;
-
+  const { index = getSheetIndex(), plugins = [], classNamePrefix: _classNamePrefix = '', ...otherOptions } = options;
+  let classNamePrefix = _classNamePrefix;
+  if (classNamePrefix && !classNamePrefix.endsWith('-')) {
+    classNamePrefix += '-';
+  }
   const key = {};
 
   const jss = create(preset());
@@ -51,8 +53,9 @@ export default function createUseStyles<C extends string = string, Props = any>(
   const dynamicStyles = getDynamicStyles(styles as Styles);
   const sheet = jss.createStyleSheet(styles, {
     index,
-    meta: `${name ? `${name}-` : ''}-jss-default`,
+    meta: `${_classNamePrefix}-jss-default`,
     link: false,
+    classNamePrefix,
     ...otherOptions,
   });
 
@@ -85,7 +88,7 @@ export default function createUseStyles<C extends string = string, Props = any>(
       if (!dynamicStyles) return null;
       const dynamicSheet = jss.createStyleSheet(dynamicStyles, {
         index,
-        meta: `${name ? `${name}-` : ''}-jss-dynamic`,
+        meta: `${_classNamePrefix}-jss-dynamic`,
         link: true,
       });
 
@@ -106,7 +109,7 @@ export default function createUseStyles<C extends string = string, Props = any>(
       // if (sheet && dynamicRules && !isFirstMount.current) {
       //   updateDynamicRules(data, sheet, dynamicRules);
       // }
-      if (dynamicSheet) {
+      if (dynamicSheet && data) {
         dynamicSheet.update(data);
       }
     }, [data, dynamicSheet]);
