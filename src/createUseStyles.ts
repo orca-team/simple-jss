@@ -2,10 +2,9 @@
 import React, { useDebugValue, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Classes, create, getDynamicStyles, Styles, StyleSheetFactoryOptions, Plugin } from 'jss';
 import preset from 'jss-preset-default';
-import isBrowser from "is-in-browser";
+import isBrowser from 'is-in-browser';
 
 import { getManager, manageSheet, unmanageSheet } from './manager';
-
 
 const isSSR = !isBrowser;
 
@@ -18,7 +17,7 @@ interface CreateUseStylesOptions extends BaseOptions {
   plugins?: Plugin[];
 }
 
-const useIsomorphicEffect = isSSR ? (React.useInsertionEffect || useLayoutEffect) : useEffect;
+const useIsomorphicEffect = isSSR ? React.useInsertionEffect || useLayoutEffect : useEffect;
 
 let index = 0;
 const getSheetIndex = () => index++;
@@ -42,7 +41,7 @@ export default function createUseStyles<C extends string = string, Props = any>(
   styles: Styles<C, Props>,
   options: CreateUseStylesOptions = {},
 ): (data?: Props) => Classes<C> {
-  const { index = getSheetIndex(), name = '', plugins = [] } = options;
+  const { index = getSheetIndex(), name = '', plugins = [], otherOptions } = options;
 
   const key = {};
 
@@ -54,6 +53,7 @@ export default function createUseStyles<C extends string = string, Props = any>(
     index,
     meta: `${name ? `${name}-` : ''}-jss-default`,
     link: false,
+    ...otherOptions,
   });
 
   return function useStyles(data?: Props) {
@@ -111,7 +111,6 @@ export default function createUseStyles<C extends string = string, Props = any>(
       }
     }, [data, dynamicSheet]);
 
-
     useIsomorphicEffect(() => {
       if (sheet) {
         manageSheet(key, {
@@ -140,7 +139,7 @@ export default function createUseStyles<C extends string = string, Props = any>(
           });
         }
       };
-    }, [sheet]);
+    }, []);
 
     const classes = useMemo<Classes<C>>(
       () => mergeClasses(sheet.classes, dynamicSheet?.classes),
