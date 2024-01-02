@@ -1,6 +1,6 @@
 {
   "name": "@orca-fe/simple-jss",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Simply integrates JSS with React",
   "types": "esm/index.d.ts",
   "module": "esm/index.js",

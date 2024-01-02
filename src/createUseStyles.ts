@@ -41,7 +41,7 @@ function mergeClasses<T extends Classes>(sheet: T, dynamic?: T) {
 export default function createUseStyles<C extends string = string, Props = any>(
   styles: Styles<C, Props>,
   options: CreateUseStylesOptions = {},
-): (data?: Props) => Classes<C> {
+) {
   const { index = getSheetIndex(), plugins = [], classNamePrefix: _classNamePrefix = '', ...otherOptions } = options;
   let classNamePrefix = _classNamePrefix;
   if (classNamePrefix && !classNamePrefix.endsWith('-')) {
@@ -75,11 +75,14 @@ export default function createUseStyles<C extends string = string, Props = any>(
     if (dynamicStyles) {
       let dynamicSheet = manager.get(dynamicKey);
       if (!dynamicSheet) {
-        manager.add(dynamicKey, jss.createStyleSheet(dynamicStyles, {
-          index,
-          meta: `${_classNamePrefix}-jss-dynamic`,
-          link: true,
-        }));
+        manager.add(
+          dynamicKey,
+          jss.createStyleSheet(dynamicStyles, {
+            index,
+            meta: `${_classNamePrefix}-jss-dynamic`,
+            link: true,
+          }),
+        );
       }
       dynamicSheet = manager.get(dynamicKey);
       manageSheet(dynamicKey, {
@@ -112,7 +115,7 @@ export default function createUseStyles<C extends string = string, Props = any>(
     }
   }
 
-  function useStyles(data?: Props) {
+  function useStyles(data?: Props): Classes<C> {
     const isFirstMount = useRef(true);
 
     const [dynamicKey] = useState({});
