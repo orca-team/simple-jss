@@ -28,8 +28,10 @@ function mergeClasses<T extends Classes>(sheet: T, dynamic?: T) {
   }
   for (const dynamicKey in dynamic) {
     if (dynamicKey in sheet) {
+      // @ts-expect-error
       classes[dynamicKey] += ` ${dynamic[dynamicKey]}`;
     } else {
+      // @ts-expect-error
       classes[dynamicKey] = ` ${dynamic[dynamicKey]}`;
     }
   }
@@ -59,7 +61,58 @@ export default function createUseStyles<C extends string = string, Props = any>(
     ...otherOptions,
   });
 
-  return function useStyles(data?: Props) {
+  const dynamicKey = {};
+  // 渲染样式
+  function load() {
+    const manager = getManager(index);
+    manager.add(key, sheet);
+    manageSheet(key, {
+      index,
+      sheet,
+    });
+
+    // dynamicKey
+    if (dynamicStyles) {
+      let dynamicSheet = manager.get(dynamicKey);
+      if (!dynamicSheet) {
+        manager.add(dynamicKey, jss.createStyleSheet(dynamicStyles, {
+          index,
+          meta: `${_classNamePrefix}-jss-dynamic`,
+          link: true,
+        }));
+      }
+      dynamicSheet = manager.get(dynamicKey);
+      manageSheet(dynamicKey, {
+        index,
+        sheet: dynamicSheet,
+      });
+    }
+  }
+
+  function unload() {
+    unmanageSheet(key, {
+      index,
+      sheet,
+    });
+    if (dynamicStyles) {
+      const manager = getManager(index);
+      const dynamicSheet = manager.get(dynamicKey);
+      unmanageSheet(dynamicKey, {
+        index,
+        sheet: dynamicSheet,
+      });
+    }
+  }
+
+  function updateDynamicSheet(data: any) {
+    if (dynamicStyles) {
+      const manager = getManager(index);
+      const dynamicSheet = manager.get(dynamicKey);
+      dynamicSheet?.update(data);
+    }
+  }
+
+  function useStyles(data?: Props) {
     const isFirstMount = useRef(true);
 
     const [dynamicKey] = useState({});
@@ -156,5 +209,11 @@ export default function createUseStyles<C extends string = string, Props = any>(
     });
 
     return classes;
-  };
+  }
+
+  useStyles.load = load;
+  useStyles.unload = unload;
+  useStyles.update = updateDynamicSheet;
+
+  return useStyles;
 }

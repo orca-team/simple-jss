@@ -2,7 +2,7 @@ import { SheetsManager } from 'jss';
 
 const defaultManagers = new Map();
 
-export const getManager = (managerId) => {
+export const getManager = (managerId): SheetsManager => {
   // If `managers` map is present in the context, we use it in order to
   // let JssProvider reset them when new response has to render server-side.
 
