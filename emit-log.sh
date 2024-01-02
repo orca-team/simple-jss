@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # 取出 log.txt 的文件内容
-log=$(cat log.txt|grep 'New tag:')
+log=$(cat log.txt|grep '+ @orca-fe/simple-jss')
 
 # 将换行符替换为两个换行符
 log=$(echo "$log")
